@@ -1,0 +1,21 @@
+- job:
+    name: 'prefsEditors'
+    project-type: 'freestyle'
+    display-name: 'Preferences Editors'
+    scm:
+        - git:
+            url: https://github.com/fluid-project/prefsEditors.git
+            branches:
+                - master
+    triggers:
+        - github
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/srv/www/4597d990/prefsEditors'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000

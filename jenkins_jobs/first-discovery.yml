@@ -1,0 +1,21 @@
+- job:
+    name: 'first-discovery'
+    project-type: 'freestyle'
+    display-name: 'First Discovery Preferences Editor Tool'
+    scm:
+        - git:
+            url: https://github.com/GPII/first-discovery.git
+            branches:
+                - master
+    triggers:
+        - github
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/srv/www/4597d990/first-discovery'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000

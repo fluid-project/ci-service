@@ -1,0 +1,31 @@
+- job:
+    name: 'fluid-infusion'
+    project-type: 'freestyle'
+    display-name: 'Fluid Infusion'
+    scm:
+        - git:
+            url: https://github.com/fluid-project/infusion.git
+            branches:
+                - master
+    triggers:
+        - github
+    builders:
+        - shell: |
+            #!/bin/sh -ex
+            npm install
+            grunt clean stylus modulefiles:all pathMap:all copy:all copy:necessities uglify:all concat:all compress:all
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: 'build/**'
+            # The 'products' prefix gets removed on the remote server
+            remove-prefix: 'build'
+            target: '/srv/www/4597d990/infusion'
+            # Deleting the 'infusion' directory using shell commands because the 'clean-remote' option
+            # was causing builds to fail http://ci.openstack.org/jenkins-job-builder/publishers.html#publishers.ssh
+            ##command: 'cd ~/fluid-infusion; rm -rf ./infusion; unzip -oq infusion-all-*.zip; rm -f infusion-all-*.zip'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000

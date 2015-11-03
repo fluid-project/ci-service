@@ -1,0 +1,21 @@
+- job:
+    name: 'videoPlayer'
+    project-type: 'freestyle'
+    display-name: 'HTML5 Video Player'
+    scm:
+        - git:
+            url: https://github.com/fluid-project/videoPlayer.git
+            branches:
+                - master
+    triggers:
+        - github
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/srv/www/4597d990/videoPlayer'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000

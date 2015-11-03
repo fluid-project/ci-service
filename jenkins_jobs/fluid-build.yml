@@ -1,0 +1,21 @@
+- job:
+    name: 'fluid-build'
+    project-type: 'freestyle'
+    display-name: 'Fluid Project build website'
+    scm:
+        - git:
+            url: https://github.com/fluid-project/build.fluidproject.org.git
+            branches:
+                - master
+    triggers:
+        - github
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/srv/www/4597d990'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000
