@@ -1,0 +1,21 @@
+- job:
+    name: 'chartAuthoring'
+    project-type: 'freestyle'
+    display-name: 'Chart Authoring'
+    scm:
+        - git:
+            url: https://github.com/fluid-project/chartAuthoring.git
+            branches:
+                - master
+    triggers:
+        - github
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/srv/www/4597d990/chartAuthoring'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000
