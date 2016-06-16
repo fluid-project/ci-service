@@ -1,31 +1,83 @@
 - job:
     name: 'fluid-infusion'
-    project-type: 'freestyle'
+    project-type: 'multijob'
+    concurrent: false
     display-name: 'Fluid Infusion'
+    node: h-0007.tor1.inclusivedesign.ca
     scm:
-        - git:
-            url: https://github.com/fluid-project/infusion.git
-            branches:
-                - master
+      - git:
+          url: https://github.com/fluid-project/infusion.git
+          branches:
+            - master
     triggers:
-        - github
+      - github
+    wrappers:
+      - timeout:
+          # Abort after these many minutes
+          timeout: 25
+          # Mark the build as failed
+          fail: true
     builders:
-        - shell: |
-            #!/bin/sh -ex
-            npm install
-            grunt clean stylus modulefiles:all pathMap:all copy:all copy:necessities uglify:all concat:all compress:all
+      # Each parent multijob builder passes the Jenkins WORKSPACE environment
+      # variable to its child job as a parameter so that a common Git working
+      # directory can be used.
+      - multijob:
+          name: create-infusion-vm
+          condition: COMPLETED
+          projects:
+            - name: create-infusion-vm
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-tests
+          condition: COMPLETED
+          projects:
+            - name: infusion-tests
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: delete-infusion-vm
+          condition: SUCCESSFUL
+          projects:
+            - name: delete-infusion-vm
+              predefined-parameters: parent_workspace=$WORKSPACE
+
+- job:
+    name: create-infusion-vm
+    description: 'Job responsible for creating a test VM'
+    node: h-0007.tor1.inclusivedesign.ca
+    workspace: $parent_workspace
+    builders:
+      # Setting BUILD_ID for the vagrant process to make sure the Jenkins process tree killer
+      # doesn't kill the VM before the next job is started.
+      - shell: BUILD_ID=infusion DISPLAY=:0 vagrant up --provider virtualbox
+
+- job:
+    name: infusion-tests
+    description: 'GPII infusion browser tests'
+    node: h-0007.tor1.inclusivedesign.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: vagrant ssh -c 'cd /home/vagrant/sync; npm install'
+      - shell: vagrant ssh -c 'cd /home/vagrant/sync; grunt clean stylus modulefiles:all pathMap:all copy:all copy:necessities uglify:all concat:all compress:all'
+      - shell: grunt tests
     publishers:
+      - tap:
+          results: report.tap
       - email:
-            recipients: builds@lists.idrc.ocad.ca
+          recipients: builds@lists.idrc.ocad.ca
       - ssh:
-            site: 'build.fluidproject.org'
-            source: 'build/**'
-            # The 'products' prefix gets removed on the remote server
-            remove-prefix: 'build'
-            target: '/srv/www/4597d990/infusion'
-            # Deleting the 'infusion' directory using shell commands because the 'clean-remote' option
-            # was causing builds to fail http://ci.openstack.org/jenkins-job-builder/publishers.html#publishers.ssh
-            ##command: 'cd ~/fluid-infusion; rm -rf ./infusion; unzip -oq infusion-all-*.zip; rm -f infusion-all-*.zip'
-            fail-on-error: true
-            use-pty: true
-            timeout: 180000
+          site: 'build.fluidproject.org'
+          source: 'build/**'
+          # The 'products' prefix gets removed on the remote server
+          remove-prefix: 'build'
+          target: '/srv/www/4597d990/infusion'
+          fail-on-error: true
+          use-pty: true
+          timeout: 180000
+
+- job:
+    name: delete-infusion-vm
+    description: 'Job responsible for deleting the test VM'
+    node: h-0007.tor1.inclusivedesign.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: vagrant destroy -f
