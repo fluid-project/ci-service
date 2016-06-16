@@ -52,7 +52,7 @@
 
 - job:
     name: infusion-tests
-    description: 'GPII infusion browser tests'
+    description: 'Fluid Infusion tests'
     node: h-0007.tor1.inclusivedesign.ca
     workspace: $parent_workspace
     builders:
