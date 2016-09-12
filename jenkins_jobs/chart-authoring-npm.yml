@@ -12,8 +12,7 @@
     builders:
         - shell: |
             #!/bin/sh -ex
-            npm install
-            grunt copy:frontEndDependencies        
+            npm install        
     publishers:
       - email:
             recipients: builds@lists.idrc.ocad.ca
