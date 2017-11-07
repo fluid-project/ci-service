@@ -6,7 +6,7 @@
         - git:
             url: https://github.com/waharnum/sjrk-storyTelling.git
             branches:
-                - deployment
+                - master
     triggers:
         - github
     builders:
