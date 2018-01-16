@@ -61,7 +61,7 @@
     builders:
       - shell: vagrant ssh -c 'cd /home/vagrant/sync; npm install'
       - shell: vagrant ssh -c 'cd /home/vagrant/sync; grunt clean stylus modulefiles:all pathMap:all copy:all copy:necessities uglify:all concat:all compress:all'
-      - shell: grunt tests
+      - shell: npm run test:vagrant
     publishers:
       - tap:
           results: report.tap
