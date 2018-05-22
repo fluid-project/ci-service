@@ -15,7 +15,7 @@
       - ssh:
             site: 'build.fluidproject.org'
             source: '**'
-            target: '/srv/www/4597d990/prefsEditors'
+            target: '/var/www/4597d990/prefsEditors'
             fail-on-error: true
             use-pty: true
             timeout: 180000

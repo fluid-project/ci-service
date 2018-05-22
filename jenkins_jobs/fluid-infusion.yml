@@ -72,7 +72,7 @@
           source: 'build/**'
           # The 'products' prefix gets removed on the remote server
           remove-prefix: 'build'
-          target: '/srv/www/4597d990/infusion'
+          target: '/var/www/4597d990/infusion'
           fail-on-error: true
           use-pty: true
           timeout: 180000
