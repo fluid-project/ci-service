@@ -1,7 +1,7 @@
 - job:
-    name: 'prefsEditors'
+    name: 'website-build.fluidproject.org-prefs-editor'
     project-type: 'freestyle'
-    display-name: 'Preferences Editors'
+    display-name: 'website-build.fluidproject.org-prefs-editor'
     scm:
         - git:
             url: https://github.com/GPII/prefsEditors.git

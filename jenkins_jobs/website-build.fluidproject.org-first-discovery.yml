@@ -1,7 +1,7 @@
 - job:
-    name: 'first-discovery'
+    name: 'website-build.fluidproject.org-first-discovery'
     project-type: 'freestyle'
-    display-name: 'First Discovery Preferences Editor Tool'
+    display-name: 'website-build.fluidproject.org-first-discovery'
     scm:
         - git:
             url: https://github.com/GPII/first-discovery.git

@@ -1,7 +1,7 @@
 - job:
-    name: 'chartAuthoring'
+    name: 'website-build.fluidproject.org-chart-authoring'
     project-type: 'freestyle'
-    display-name: 'Chart Authoring'
+    display-name: 'website-build.fluidproject.org-chart-authoring'
     scm:
         - git:
             url: https://github.com/fluid-project/chartAuthoring.git

@@ -1,7 +1,7 @@
 - job:
-    name: 'fluid-build'
+    name: 'website-build.fluidproject.org'
     project-type: 'freestyle'
-    display-name: 'Fluid Project build website'
+    display-name: 'website-build.fluidproject.org'
     scm:
         - git:
             url: https://github.com/fluid-project/build.fluidproject.org.git

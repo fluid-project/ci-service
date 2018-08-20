@@ -1,7 +1,7 @@
 - job:
-    name: 'videoPlayer'
+    name: 'website-build.fluidproject.org-video-player'
     project-type: 'freestyle'
-    display-name: 'HTML5 Video Player'
+    display-name: 'website-build.fluidproject.org-video-player'
     scm:
         - git:
             url: https://github.com/fluid-project/videoPlayer.git

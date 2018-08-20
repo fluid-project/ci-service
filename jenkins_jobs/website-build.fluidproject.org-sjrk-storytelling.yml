@@ -1,7 +1,7 @@
 - job:
-    name: 'sjrk-storyTelling'
+    name: 'website-build.fluidproject.org-sjrk-storytelling'
     project-type: 'freestyle'
-    display-name: 'SJRK Storytelling'
+    display-name: 'website-build.fluidproject.org-sjrk-storytelling'
     scm:
         - git:
             url: https://github.com/waharnum/sjrk-storyTelling.git
