@@ -1,0 +1,117 @@
+- job:
+    name: 'infusion-master'
+    display-name: 'infusion-master'
+    node: h-0005.tor1.incd.ca
+    concurrent: false
+    project-type: 'multijob'
+    scm:
+      - git:
+          url: https://github.com/fluid-project/infusion.git
+          skip-tag: true
+          branches:
+            - master
+    triggers:
+      - github
+    wrappers:
+      - timeout:
+          timeout: 45
+          fail: true
+    builders:
+      # Each parent multijob builder passes the Jenkins WORKSPACE environment
+      # variable to its child job as a parameter so that a common Git working
+      # directory can be used.
+      - multijob:
+          name: infusion-master-build
+          condition: COMPLETED
+          projects:
+            - name: infusion-master-build
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-master-code-analysis
+          condition: COMPLETED
+          projects:
+            - name: infusion-master-code-analysis
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-master-node-tests
+          condition: COMPLETED
+          projects:
+            - name: infusion-master-node-tests
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-master-browser-tests
+          condition: COMPLETED
+          projects:
+            - name: infusion-master-browser-tests
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-master-publish
+          condition: COMPLETED
+          projects:
+            - name: infusion-master-publish
+              predefined-parameters: parent_workspace=$WORKSPACE
+      - multijob:
+          name: infusion-master-cleanup
+          condition: SUCCESSFUL
+          projects:
+            - name: infusion-master-cleanup
+              predefined-parameters: parent_workspace=$WORKSPACE
+
+- job:
+    name: infusion-master-build
+    description: 'Job responsible for creating a test VM'
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      # Setting BUILD_ID for the vagrant process to make sure the Jenkins process tree killer
+      # doesn't kill the VM before the next job is started.
+      - shell: BUILD_ID=infusion DISPLAY=:0 vagrant up --provider virtualbox
+
+- job:
+    name: infusion-master-code-analysis
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: BUILD_ID=infusion vagrant ssh -c 'cd /home/vagrant/sync/; $(npm bin)/grunt lint'
+
+- job:
+    name: infusion-master-node-tests
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: BUILD_ID=infusion npm run test:vagrantNode
+
+- job:
+    name: infusion-master-browser-tests
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: BUILD_ID=infusion npm run test:vagrantBrowser
+
+- job:
+    name: infusion-master-publish
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: BUILD_ID=infusion npm run buildDists && npm run buildStylus
+    publishers:
+      - tap:
+          results: report.tap
+      - email:
+          recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+          site: 'build.fluidproject.org'
+          source: 'build/**'
+          remove-prefix: 'build'
+          target: '/var/www/4597d990/infusion'
+          fail-on-error: true
+          use-pty: true
+          timeout: 180000
+
+- job:
+    name: infusion-master-cleanup
+    description: 'Job responsible for deleting the test VM'
+    node: h-0005.tor1.incd.ca
+    workspace: $parent_workspace
+    builders:
+      - shell: vagrant halt -f && sleep 5 && vagrant destroy -f
