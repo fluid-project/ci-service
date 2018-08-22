@@ -44,6 +44,7 @@
           success-comment: 'CI job passed: ${BUILD_URL}'
           failure-comment: 'CI job failed: ${BUILD_URL}'
           error-comment: 'CI job error: ${BUILD_URL}'
+          status-context: 'jenkins'
 
 # The gh-pr-scm macro should be used alongside gh-pr-builder. It will only checkout the PR
 # contributor's repository and branch. This changes the default behaviour of the plugin
