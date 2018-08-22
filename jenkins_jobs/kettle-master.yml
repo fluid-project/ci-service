@@ -16,33 +16,39 @@
       - timeout:
           timeout: 45
           fail: true
+    publishers:
+      - postbuildscript:
+          builders:
+            - role: SLAVE
+              build-on:
+                - NOT_BUILT
+                - ABORTED
+                - FAILURE
+                - SUCCESS
+                - UNSTABLE
+              build-steps:
+                - shell: vagrant halt -f && sleep 5 && vagrant destroy -f
     builders:
       # Each parent multijob builder passes the Jenkins WORKSPACE environment
       # variable to its child job as a parameter so that a common Git working
       # directory can be used.
       - multijob:
           name: kettle-master-build
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: kettle-master-build
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: kettle-master-code-analysis
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: kettle-master-code-analysis
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: kettle-master-node-tests
-          condition: COMPLETED
-          projects:
-            - name: kettle-master-node-tests
-              predefined-parameters: parent_workspace=$WORKSPACE
-      - multijob:
-          name: kettle-master-cleanup
           condition: SUCCESSFUL
           projects:
-            - name: kettle-master-cleanup
+            - name: kettle-master-node-tests
               predefined-parameters: parent_workspace=$WORKSPACE
 
 - job:
@@ -68,11 +74,3 @@
     workspace: $parent_workspace
     builders:
       - shell: BUILD_ID=infusion npm run test:vagrant
-
-- job:
-    name: kettle-master-cleanup
-    description: 'Job responsible for deleting the test VM'
-    node: h-0005.tor1.incd.ca
-    workspace: $parent_workspace
-    builders:
-      - shell: vagrant halt -f && sleep 5 && vagrant destroy -f

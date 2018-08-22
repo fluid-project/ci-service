@@ -16,45 +16,51 @@
       - timeout:
           timeout: 45
           fail: true
+    publishers:
+      - postbuildscript:
+          builders:
+            - role: SLAVE
+              build-on:
+                - NOT_BUILT
+                - ABORTED
+                - FAILURE
+                - SUCCESS
+                - UNSTABLE
+              build-steps:
+                - shell: vagrant halt -f && sleep 5 && vagrant destroy -f
     builders:
       # Each parent multijob builder passes the Jenkins WORKSPACE environment
       # variable to its child job as a parameter so that a common Git working
       # directory can be used.
       - multijob:
           name: infusion-master-build
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: infusion-master-build
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-master-code-analysis
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: infusion-master-code-analysis
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-master-node-tests
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: infusion-master-node-tests
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-master-browser-tests
-          condition: COMPLETED
+          condition: SUCCESSFUL
           projects:
             - name: infusion-master-browser-tests
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-master-publish
-          condition: COMPLETED
-          projects:
-            - name: infusion-master-publish
-              predefined-parameters: parent_workspace=$WORKSPACE
-      - multijob:
-          name: infusion-master-cleanup
           condition: SUCCESSFUL
           projects:
-            - name: infusion-master-cleanup
+            - name: infusion-master-publish
               predefined-parameters: parent_workspace=$WORKSPACE
 
 - job:
@@ -107,11 +113,3 @@
           fail-on-error: true
           use-pty: true
           timeout: 180000
-
-- job:
-    name: infusion-master-cleanup
-    description: 'Job responsible for deleting the test VM'
-    node: h-0005.tor1.incd.ca
-    workspace: $parent_workspace
-    builders:
-      - shell: vagrant halt -f && sleep 5 && vagrant destroy -f
