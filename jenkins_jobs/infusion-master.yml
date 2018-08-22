@@ -56,12 +56,12 @@
           projects:
             - name: infusion-master-browser-tests
               predefined-parameters: parent_workspace=$WORKSPACE
-      - multijob:
-          name: infusion-master-publish
-          condition: SUCCESSFUL
-          projects:
-            - name: infusion-master-publish
-              predefined-parameters: parent_workspace=$WORKSPACE
+#      - multijob:
+#          name: infusion-master-publish
+#          condition: SUCCESSFUL
+#          projects:
+#            - name: infusion-master-publish
+#              predefined-parameters: parent_workspace=$WORKSPACE
 
 - job:
     name: infusion-master-build
@@ -94,22 +94,22 @@
     builders:
       - shell: BUILD_ID=infusion npm run test:vagrantBrowser
 
-- job:
-    name: infusion-master-publish
-    node: h-0005.tor1.incd.ca
-    workspace: $parent_workspace
-    builders:
-      - shell: BUILD_ID=infusion npm run buildDists && npm run buildStylus
-    publishers:
-      - tap:
-          results: report.tap
-      - email:
-          recipients: builds@lists.idrc.ocad.ca
-      - ssh:
-          site: 'build.fluidproject.org'
-          source: 'build/**'
-          remove-prefix: 'build'
-          target: '/var/www/4597d990/infusion'
-          fail-on-error: true
-          use-pty: true
-          timeout: 180000
+#- job:
+#    name: infusion-master-publish
+#    node: h-0005.tor1.incd.ca
+#    workspace: $parent_workspace
+#    builders:
+#      - shell: BUILD_ID=infusion npm run buildDists && npm run buildStylus
+#    publishers:
+#      - tap:
+#          results: report.tap
+#      - email:
+#          recipients: builds@lists.idrc.ocad.ca
+#      - ssh:
+#          site: 'build.fluidproject.org'
+#          source: 'build/**'
+#          remove-prefix: 'build'
+#          target: '/var/www/4597d990/infusion'
+#          fail-on-error: true
+#          use-pty: true
+#          timeout: 180000
