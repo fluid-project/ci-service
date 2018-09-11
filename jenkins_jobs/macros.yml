@@ -5,38 +5,30 @@
       - github-pull-request:
           # List of admins who can trigger jobs for PRs opened by unrecognized users.
           admin-list:
-            - amatas
             - amb26
             - avtar
             - cindyli
             - colinbdclark
-            - gloob
-            - javihernandez
-            - jobara            
-            - kaspermarkus
+            - jhung
+            - jobara
             - klown
             - michelled
-            - sgithens
             - simonbates
-            - stegru
-            - the-t-in-rtf
             - waharnum
-            - yzen
           # Whitelist the following users so that their PRs automatically trigger jobs.
           white-list:
             - amatas
+            - amb26
             - avtar
-            - bsheytanov
-            - gloob
+            - BlueSlug
+            - cindyli
+            - colinbdclark
+            - jhung
             - jobara
             - klown
-            - localduke
             - michelled
-            - stegru
-            - SteveALee
-            - Thanos21
+            - simonbates
             - the-t-in-rtf
-            - triffon
             - waharnum
           # Poll GitHub every five minutes.
           cron: '*/2 * * * *'
