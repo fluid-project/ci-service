@@ -21,6 +21,7 @@
       - ssh:
             site: 'build.fluidproject.org'
             source: 'build/**'
+            remove_prefix: 'build'
             target: '/var/www/4597d990/lab/music-mania'
             fail-on-error: true
             use-pty: true
