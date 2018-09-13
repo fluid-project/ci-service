@@ -1,0 +1,25 @@
+- job:
+    name: 'website-build.fluidproject.org-labs-playtown'
+    project-type: 'freestyle'
+    display-name: 'website-build.fluidproject.org-labs-playtown'
+    scm:
+        - git:
+            url: https://github.com/fluid-lab/playtown.git
+            branches:
+                - master
+    triggers:
+        - github
+    builders:
+        - shell: |
+            #!/bin/sh -ex
+            npm install
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: '**'
+            target: '/var/www/4597d990/labs/playtown'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000
