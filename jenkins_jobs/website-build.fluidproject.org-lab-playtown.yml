@@ -1,7 +1,7 @@
 - job:
-    name: 'website-build.fluidproject.org-labs-playtown'
+    name: 'website-build.fluidproject.org-lab-playtown'
     project-type: 'freestyle'
-    display-name: 'website-build.fluidproject.org-labs-playtown'
+    display-name: 'website-build.fluidproject.org-lab-playtown'
     scm:
         - git:
             url: https://github.com/fluid-lab/playtown.git
@@ -19,7 +19,7 @@
       - ssh:
             site: 'build.fluidproject.org'
             source: '**'
-            target: '/var/www/4597d990/labs/playtown'
+            target: '/var/www/4597d990/lab/playtown'
             fail-on-error: true
             use-pty: true
             timeout: 180000
