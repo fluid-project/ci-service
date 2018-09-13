@@ -1,0 +1,27 @@
+- job:
+    name: 'website-build.fluidproject.org-lab-music-mania'
+    project-type: 'freestyle'
+    display-name: 'website-build.fluidproject.org-lab-music-mania'
+    scm:
+        - git:
+            url: https://github.com/fluid-lab/Music-Mania.git
+            branches:
+                - master
+    triggers:
+        - github
+    builders:
+        - shell: |
+            #!/bin/sh -ex
+            npm install
+            npm run build
+
+    publishers:
+      - email:
+            recipients: builds@lists.idrc.ocad.ca
+      - ssh:
+            site: 'build.fluidproject.org'
+            source: 'build/**'
+            target: '/var/www/4597d990/lab/music-mania'
+            fail-on-error: true
+            use-pty: true
+            timeout: 180000
