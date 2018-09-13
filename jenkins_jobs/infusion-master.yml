@@ -99,7 +99,7 @@
     node: h-0005.tor1.incd.ca
     workspace: $parent_workspace
     builders:
-      - shell: BUILD_ID=infusion npm install && npm grunt build
+      - shell: BUILD_ID=infusion npm install && grunt build
     publishers:
       - tap:
           results: report.tap
