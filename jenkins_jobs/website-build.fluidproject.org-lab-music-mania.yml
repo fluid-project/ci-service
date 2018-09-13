@@ -6,7 +6,7 @@
         - git:
             url: https://github.com/fluid-lab/Music-Mania.git
             branches:
-                - master
+                - deploy
     triggers:
         - github
     builders:
