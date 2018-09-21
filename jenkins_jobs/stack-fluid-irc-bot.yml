@@ -20,6 +20,9 @@
         - shell: |
             #!/bin/sh -ex
             /usr/local/bin/docker-compose -p "$PROJECT_ID" up --force-recreate --build -d
+            # Health check
+            # /usr/bin/sleep 45
+            # /usr/bin/curl --no-buffer --retry 120 --retry-delay 1 "https://irclogs.fluidproject.org"
     publishers:
       - email:
             recipients: ops-notifications@lists.inclusivedesign.ca
