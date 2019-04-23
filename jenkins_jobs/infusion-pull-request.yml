@@ -39,22 +39,16 @@
             - name: infusion-pr-build
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
-          name: infusion-pr-code-analysis
+          name: infusion-pr-linting
           condition: SUCCESSFUL
           projects:
-            - name: infusion-pr-code-analysis
+            - name: infusion-pr-linting
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
-          name: infusion-pr-node-tests
+          name: infusion-pr-tests
           condition: SUCCESSFUL
           projects:
-            - name: infusion-pr-node-tests
-              predefined-parameters: parent_workspace=$WORKSPACE
-      - multijob:
-          name: infusion-pr-browser-tests
-          condition: SUCCESSFUL
-          projects:
-            - name: infusion-pr-browser-tests
+            - name: infusion-pr-tests
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-pr-publish
@@ -65,7 +59,7 @@
 
 - job:
     name: infusion-pr-build
-    description: 'Job responsible for creating a test VM'
+    description: 'Create a test VM.'
     node: h-0005.tor1.incd.ca
     workspace: $parent_workspace
     builders:
@@ -74,22 +68,17 @@
       - shell: BUILD_ID=infusion DISPLAY=:0 vagrant up --provider virtualbox
 
 - job:
-    name: infusion-pr-code-analysis
+    name: infusion-pr-linting
+    description: 'Run linting against all code.'
     node: h-0005.tor1.incd.ca
     workspace: $parent_workspace
     builders:
       - shell: BUILD_ID=infusion vagrant ssh -c 'cd /home/vagrant/sync/; $(npm bin)/grunt lint'
 
 - job:
-    name: infusion-pr-node-tests
+    name: infusion-pr-tests
+    description: 'Run all tests in a VM.'
     node: h-0005.tor1.incd.ca
     workspace: $parent_workspace
     builders:
-      - shell: BUILD_ID=infusion npm run test:vagrantNode
-
-- job:
-    name: infusion-pr-browser-tests
-    node: h-0005.tor1.incd.ca
-    workspace: $parent_workspace
-    builders:
-      - shell: BUILD_ID=infusion npm run test:vagrantBrowser
+      - shell: BUILD_ID=infusion npm run test:vagrant
