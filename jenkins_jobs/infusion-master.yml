@@ -45,10 +45,10 @@
             - name: infusion-master-linting
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
-          name: infusion-master-node-tests
+          name: infusion-master-tests
           condition: SUCCESSFUL
           projects:
-            - name: infusion-master-node-tests
+            - name: infusion-master-tests
               predefined-parameters: parent_workspace=$WORKSPACE
       - multijob:
           name: infusion-master-publish
