@@ -10,7 +10,7 @@
         - git:
             url: https://github.com/fluid-project/ci-service.git
             branches:
-                - master
+                - main
     triggers:
       - github
     builders:      
